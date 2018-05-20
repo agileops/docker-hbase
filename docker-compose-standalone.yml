@@ -1,8 +1,9 @@
 version: "3"
 
 services:
+# Identifie les jobs et ressources avec les noms jobs*ressources,
   namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
+    image: fastds/hadoop-namenode:2.9.1
     container_name: namenode
     volumes:
       - hadoop_namenode:/hadoop/dfs/name
@@ -12,7 +13,7 @@ services:
       - ./hadoop.env
 
   datanode:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+    image: fastds/hadoop-datanode:2.9.1
     container_name: datanode
     volumes:
       - hadoop_datanode:/hadoop/dfs/data
@@ -22,23 +23,25 @@ services:
       - ./hadoop.env
 
   resourcemanager:
-    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop2.7.4-java8
+    image: fastds/hadoop-resourcemanager:2.9.1
     container_name: resourcemanager
     environment:
       SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
     env_file:
       - ./hadoop.env
 
+# Identifie les machines
   nodemanager1:
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop2.7.4-java8
+    image: fastds/hadoop-nodemanager:2.9.1
     container_name: nodemanager
     environment:
       SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
     env_file:
       - ./hadoop.env
 
+# Garde l'historique des transations
   historyserver:
-    image: bde2020/hadoop-historyserver:2.0.0-hadoop2.7.4-java8
+    image: fastds/hadoop-historyserver:2.9.1
     container_name: historyserver
     volumes:
       - hadoop_historyserver:/hadoop/yarn/timeline
@@ -47,8 +50,9 @@ services:
     env_file:
       - ./hadoop.env
 
+# Gère les query et les index hbase
   hbase:
-    image: bde2020/hbase-standalone:1.0.0-hbase1.2.6
+    image: fastds/hbase-standalone:2.0.0
     container_name: hbase
     volumes:
       - hbase_data:/hbase-data
@@ -61,10 +65,45 @@ services:
       - 2888:2888
       - 3888:3888
       - 2181:2181
+      - 9090:9090
     environment:
       SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
     env_file:
       - ./hbase-standalone.env
+
+# Fastds ;-) Outils de datascience (BigData & ml)
+  fastds:
+     image: fastds-tutorial:latest
+     # build: .
+     volumes:
+       - ./data:/work-dir/data
+     restart: "no"
+     ports:
+       - 8888:8888
+       - 8088:8088
+       - 9000:9000
+     environment:
+       BIND_ADDRESS: 0.0.0.0
+
+  hue:
+    image: gethue/hue:latest
+    hostname: hue
+    container_name: hue
+    dns: 8.8.8.8
+    ports:
+      - "9999:8888"
+    #command: ./build/env/bin/hue runserver_plus 0.0.0.0:8888
+    command: tail -f /dev/null
+    volumes:
+      # - ../../../apps/hbase/src:/hue/apps/hbase/src
+      - ./hue.ini:/hue/desktop/conf/hue.ini
+
+# # hbase ui
+#   hue:
+#      image: gethue/hue:latest
+#      # build: .
+#      ports:
+#         - 9999:8888
 
 volumes:
   hadoop_namenode:
