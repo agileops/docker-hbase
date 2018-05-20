@@ -72,7 +72,7 @@ services:
       - ./hbase-standalone.env
 
 # Agileops ;-) Outils de datascience (BigData & ml)
-  agileops:
+  fastds:
      image: agileops/fastds-tutorial:latest
      # build: .
      volumes:
@@ -85,18 +85,20 @@ services:
      environment:
        BIND_ADDRESS: 0.0.0.0
 
-  hue:
-    image: gethue/hue:latest
-    hostname: hue
-    container_name: hue
-    dns: 8.8.8.8
-    ports:
-      - "9999:8888"
-    #command: ./build/env/bin/hue runserver_plus 0.0.0.0:8888
-    command: tail -f /dev/null
-    volumes:
-      # - ../../../apps/hbase/src:/hue/apps/hbase/src
-      - ./hue.ini:/hue/desktop/conf/hue.ini
+  # hue:
+  #   image: gethue/hue:latest
+  #   hostname: hue
+  #   container_name: hue
+  #   dns: 8.8.8.8
+  #   ports:
+  #     - "9999:8888"
+  #   # command: ./build/env/bin/hue runserver_plus 0.0.0.0:8888
+  #   command: tail -f /dev/null
+  #   volumes:
+  #     # - ../../../apps/hbase/src:/hue/apps/hbase/src
+  #     - ./hue.ini:/hue/desktop/conf.d/hue.ini
+  #     # - ./hue.ini:/hue/desktop/conf.dist/hue.ini
+
 
 # # hbase ui
 #   hue:
