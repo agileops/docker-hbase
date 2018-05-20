@@ -73,7 +73,7 @@ services:
 
 # Agileops ;-) Outils de datascience (BigData & ml)
   agileops:
-     image: agileops-tutorial:latest
+     image: agileops/fastds-tutorial:latest
      # build: .
      volumes:
        - ./data:/work-dir/data
