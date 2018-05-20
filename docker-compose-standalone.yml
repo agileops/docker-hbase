@@ -3,7 +3,7 @@ version: "3"
 services:
 # Identifie les jobs et ressources avec les noms jobs*ressources,
   namenode:
-    image: fastds/hadoop-namenode:2.9.1
+    image: agileops/hadoop-namenode:2.9.1
     container_name: namenode
     volumes:
       - hadoop_namenode:/hadoop/dfs/name
@@ -13,7 +13,7 @@ services:
       - ./hadoop.env
 
   datanode:
-    image: fastds/hadoop-datanode:2.9.1
+    image: agileops/hadoop-datanode:2.9.1
     container_name: datanode
     volumes:
       - hadoop_datanode:/hadoop/dfs/data
@@ -23,7 +23,7 @@ services:
       - ./hadoop.env
 
   resourcemanager:
-    image: fastds/hadoop-resourcemanager:2.9.1
+    image: agileops/hadoop-resourcemanager:2.9.1
     container_name: resourcemanager
     environment:
       SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
@@ -32,7 +32,7 @@ services:
 
 # Identifie les machines
   nodemanager1:
-    image: fastds/hadoop-nodemanager:2.9.1
+    image: agileops/hadoop-nodemanager:2.9.1
     container_name: nodemanager
     environment:
       SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
@@ -41,7 +41,7 @@ services:
 
 # Garde l'historique des transations
   historyserver:
-    image: fastds/hadoop-historyserver:2.9.1
+    image: agileops/hadoop-historyserver:2.9.1
     container_name: historyserver
     volumes:
       - hadoop_historyserver:/hadoop/yarn/timeline
@@ -52,7 +52,7 @@ services:
 
 # Gère les query et les index hbase
   hbase:
-    image: fastds/hbase-standalone:2.0.0
+    image: agileops/hbase-standalone:2.0.0
     container_name: hbase
     volumes:
       - hbase_data:/hbase-data
@@ -71,9 +71,9 @@ services:
     env_file:
       - ./hbase-standalone.env
 
-# Fastds ;-) Outils de datascience (BigData & ml)
-  fastds:
-     image: fastds-tutorial:latest
+# Agileops ;-) Outils de datascience (BigData & ml)
+  agileops:
+     image: agileops-tutorial:latest
      # build: .
      volumes:
        - ./data:/work-dir/data
