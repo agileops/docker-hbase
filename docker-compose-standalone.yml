@@ -54,7 +54,7 @@ services:
 
 # Gère les query et les index hbase
   hbase:
-    image: agileops/hbase-standalone:1.4.4
+    image: agileops/hbase-standalone:1.4.4-wip
     hostname: hbase
     container_name: hbase
     volumes:
