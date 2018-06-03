@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+# set -x
 function addProperty() {
   local path=$1
   local name=$2

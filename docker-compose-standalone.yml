@@ -7,6 +7,8 @@ services:
     container_name: namenode
     volumes:
       - hadoop_namenode:/hadoop/dfs/name
+    ports:
+      - 50070:50070
     environment:
       - CLUSTER_NAME=test
     env_file:
@@ -52,7 +54,8 @@ services:
 
 # Gère les query et les index hbase
   hbase:
-    image: agileops/hbase-standalone:2.0.0
+    image: agileops/hbase-standalone:1.4.4-wip
+    hostname: hbase
     container_name: hbase
     volumes:
       - hbase_data:/hbase-data
@@ -62,18 +65,21 @@ services:
       - 16010:16010
       - 16020:16020
       - 16030:16030
+      - 16301:16301
       - 2888:2888
       - 3888:3888
       - 2181:2181
       - 9090:9090
+      - 8765:8765
     environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 namenode:2181"
     env_file:
       - ./hbase-standalone.env
+      - ./hadoop.env
 
 # Agileops ;-) Outils de datascience (BigData & ml)
   fastds:
-     image: agileops/fastds-tutorial:latest
+     image: agileops/fastds-tutorial:WIP
      # build: .
      volumes:
        - ./data:/work-dir/data
@@ -85,27 +91,16 @@ services:
      environment:
        BIND_ADDRESS: 0.0.0.0
 
-  # hue:
-  #   image: gethue/hue:latest
-  #   hostname: hue
-  #   container_name: hue
-  #   dns: 8.8.8.8
-  #   ports:
-  #     - "9999:8888"
-  #   # command: ./build/env/bin/hue runserver_plus 0.0.0.0:8888
-  #   command: tail -f /dev/null
-  #   volumes:
-  #     # - ../../../apps/hbase/src:/hue/apps/hbase/src
-  #     - ./hue.ini:/hue/desktop/conf.d/hue.ini
-  #     # - ./hue.ini:/hue/desktop/conf.dist/hue.ini
+  zoo1:
+    image: zookeeper:3.4.12
+    hostname: zoo1
+    container_name: zoo1
+    volumes:
+      - zoo1_data:/zookeeper-data
 
-
-# # hbase ui
-#   hue:
-#      image: gethue/hue:latest
-#      # build: .
-#      ports:
-#         - 9999:8888
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888
 
 volumes:
   hadoop_namenode:
@@ -113,3 +108,4 @@ volumes:
   hadoop_historyserver:
   hbase_data:
   hbase_zookeeper_data:
+  zoo1_data:
